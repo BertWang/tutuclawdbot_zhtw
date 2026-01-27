@@ -1,0 +1,36 @@
+{
+  "name": "@clawdbot/dingtalk",
+  "version": "2026.1.25",
+  "type": "module",
+  "description": "Clawdbot DingTalk channel plugin (Stream mode)",
+  "clawdbot": {
+    "extensions": [
+      "./index.ts"
+    ],
+    "channel": {
+      "id": "dingtalk",
+      "label": "DingTalk",
+      "selectionLabel": "DingTalk (钉钉)",
+      "detailLabel": "DingTalk",
+      "docsPath": "/channels/dingtalk",
+      "docsLabel": "dingtalk",
+      "blurb": "DingTalk bot via Stream mode (no public IP needed).",
+      "aliases": ["ding", "dingding"],
+      "order": 60
+    },
+    "install": {
+      "npmSpec": "@clawdbot/dingtalk",
+      "localPath": "extensions/dingtalk",
+      "defaultChoice": "local"
+    }
+  },
+  "dependencies": {
+    "dingtalk-stream": "^2.1.4"
+  },
+  "devDependencies": {
+    "clawdbot": "workspace:*"
+  },
+  "peerDependencies": {
+    "clawdbot": ">=2026.1.25"
+  }
+}

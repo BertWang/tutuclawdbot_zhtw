@@ -1,0 +1,182 @@
+﻿
+> clawdbot@2026.1.25 clawdbot D:\clawdbot-main
+> node scripts/run-node.mjs "plugins" "list" "--verbose"
+
+Plugins (1/30 loaded)
+@clawdbot/bluebubbles (bluebubbles) disabled
+  source: D:\clawdbot-main\extensions\bluebubbles\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/copilot-proxy (copilot-proxy) disabled
+  source: D:\clawdbot-main\extensions\copilot-proxy\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/diagnostics-otel (diagnostics-otel) disabled
+  source: D:\clawdbot-main\extensions\diagnostics-otel\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/dingtalk (dingtalk) disabled
+  source: D:\clawdbot-main\extensions\dingtalk\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/discord (discord) disabled
+  source: D:\clawdbot-main\extensions\discord\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/google-antigravity-auth (google-antigravity-auth) disabled
+  source: D:\clawdbot-main\extensions\google-antigravity-auth\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/google-gemini-cli-auth (google-gemini-cli-auth) disabled
+  source: D:\clawdbot-main\extensions\google-gemini-cli-auth\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/googlechat (googlechat) disabled
+  source: D:\clawdbot-main\extensions\googlechat\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/imessage (imessage) disabled
+  source: D:\clawdbot-main\extensions\imessage\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/line (line) disabled
+  source: D:\clawdbot-main\extensions\line\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+LLM Task (llm-task) disabled
+  source: D:\clawdbot-main\extensions\llm-task\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+Lobster (lobster) disabled
+  source: D:\clawdbot-main\extensions\lobster\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/matrix (matrix) disabled
+  source: D:\clawdbot-main\extensions\matrix\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/mattermost (mattermost) disabled
+  source: D:\clawdbot-main\extensions\mattermost\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+Memory (Core) (memory-core) loaded
+  source: D:\clawdbot-main\extensions\memory-core\index.ts
+  origin: bundled
+  version: 2026.1.25
+
+@clawdbot/memory-lancedb (memory-lancedb) disabled
+  source: D:\clawdbot-main\extensions\memory-lancedb\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/msteams (msteams) disabled
+  source: D:\clawdbot-main\extensions\msteams\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/nextcloud-talk (nextcloud-talk) disabled
+  source: D:\clawdbot-main\extensions\nextcloud-talk\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/nostr (nostr) disabled
+  source: D:\clawdbot-main\extensions\nostr\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+OpenProse (open-prose) disabled
+  source: D:\clawdbot-main\extensions\open-prose\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+qwen-portal-auth disabled
+  source: D:\clawdbot-main\extensions\qwen-portal-auth\index.ts
+  origin: bundled
+  error: bundled (disabled by default)
+
+@clawdbot/signal (signal) disabled
+  source: D:\clawdbot-main\extensions\signal\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/slack (slack) disabled
+  source: D:\clawdbot-main\extensions\slack\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/telegram (telegram) disabled
+  source: D:\clawdbot-main\extensions\telegram\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/tlon (tlon) disabled
+  source: D:\clawdbot-main\extensions\tlon\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/twitch (twitch) disabled
+  source: D:\clawdbot-main\extensions\twitch\index.ts
+  origin: bundled
+  version: 2026.1.23
+  error: bundled (disabled by default)
+
+@clawdbot/voice-call (voice-call) disabled
+  source: D:\clawdbot-main\extensions\voice-call\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/whatsapp (whatsapp) disabled
+  source: D:\clawdbot-main\extensions\whatsapp\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/zalo (zalo) disabled
+  source: D:\clawdbot-main\extensions\zalo\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)
+
+@clawdbot/zalouser (zalouser) disabled
+  source: D:\clawdbot-main\extensions\zalouser\index.ts
+  origin: bundled
+  version: 2026.1.25
+  error: bundled (disabled by default)

@@ -9,6 +9,7 @@ import { syncUrlWithSessionKey } from "./app-settings";
 import type { SessionsListResult } from "./types";
 import type { ThemeMode } from "./theme";
 import type { ThemeTransitionContext } from "./theme-transition";
+import { getLocale } from "./locales";
 
 export function renderTab(state: AppViewState, tab: Tab) {
   const href = pathForTab(tab, state.basePath);
@@ -17,19 +18,19 @@ export function renderTab(state: AppViewState, tab: Tab) {
       href=${href}
       class="nav-item ${state.tab === tab ? "active" : ""}"
       @click=${(event: MouseEvent) => {
-        if (
-          event.defaultPrevented ||
-          event.button !== 0 ||
-          event.metaKey ||
-          event.ctrlKey ||
-          event.shiftKey ||
-          event.altKey
-        ) {
-          return;
-        }
-        event.preventDefault();
-        state.setTab(tab);
-      }}
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+      event.preventDefault();
+      state.setTab(tab);
+    }}
       title=${titleForTab(tab)}
     >
       <span class="nav-item__icon" aria-hidden="true">${icons[iconForTab(tab)]}</span>
@@ -54,41 +55,41 @@ export function renderChatControls(state: AppViewState) {
           .value=${state.sessionKey}
           ?disabled=${!state.connected}
           @change=${(e: Event) => {
-            const next = (e.target as HTMLSelectElement).value;
-            state.sessionKey = next;
-            state.chatMessage = "";
-            state.chatStream = null;
-            state.chatStreamStartedAt = null;
-            state.chatRunId = null;
-            state.resetToolStream();
-            state.resetChatScroll();
-            state.applySettings({
-              ...state.settings,
-              sessionKey: next,
-              lastActiveSessionKey: next,
-            });
-            void state.loadAssistantIdentity();
-            syncUrlWithSessionKey(state, next, true);
-            void loadChatHistory(state);
-          }}
+      const next = (e.target as HTMLSelectElement).value;
+      state.sessionKey = next;
+      state.chatMessage = "";
+      state.chatStream = null;
+      state.chatStreamStartedAt = null;
+      state.chatRunId = null;
+      state.resetToolStream();
+      state.resetChatScroll();
+      state.applySettings({
+        ...state.settings,
+        sessionKey: next,
+        lastActiveSessionKey: next,
+      });
+      void state.loadAssistantIdentity();
+      syncUrlWithSessionKey(state, next, true);
+      void loadChatHistory(state);
+    }}
         >
           ${repeat(
-            sessionOptions,
-            (entry) => entry.key,
-            (entry) =>
-              html`<option value=${entry.key}>
+      sessionOptions,
+      (entry) => entry.key,
+      (entry) =>
+        html`<option value=${entry.key}>
                 ${entry.displayName ?? entry.key}
               </option>`,
-          )}
+    )}
         </select>
       </label>
       <button
         class="btn btn--sm btn--icon"
         ?disabled=${state.chatLoading || !state.connected}
         @click=${() => {
-          state.resetToolStream();
-          void loadChatHistory(state);
-        }}
+      state.resetToolStream();
+      void loadChatHistory(state);
+    }}
         title="Refresh chat history"
       >
         ${refreshIcon}
@@ -98,16 +99,16 @@ export function renderChatControls(state: AppViewState) {
         class="btn btn--sm btn--icon ${showThinking ? "active" : ""}"
         ?disabled=${disableThinkingToggle}
         @click=${() => {
-          if (disableThinkingToggle) return;
-          state.applySettings({
-            ...state.settings,
-            chatShowThinking: !state.settings.chatShowThinking,
-          });
-        }}
+      if (disableThinkingToggle) return;
+      state.applySettings({
+        ...state.settings,
+        chatShowThinking: !state.settings.chatShowThinking,
+      });
+    }}
         aria-pressed=${showThinking}
         title=${disableThinkingToggle
-          ? "Disabled during onboarding"
-          : "Toggle assistant thinking/working output"}
+      ? "Disabled during onboarding"
+      : "Toggle assistant thinking/working output"}
       >
         ${icons.brain}
       </button>
@@ -115,16 +116,16 @@ export function renderChatControls(state: AppViewState) {
         class="btn btn--sm btn--icon ${focusActive ? "active" : ""}"
         ?disabled=${disableFocusToggle}
         @click=${() => {
-          if (disableFocusToggle) return;
-          state.applySettings({
-            ...state.settings,
-            chatFocusMode: !state.settings.chatFocusMode,
-          });
-        }}
+      if (disableFocusToggle) return;
+      state.applySettings({
+        ...state.settings,
+        chatFocusMode: !state.settings.chatFocusMode,
+      });
+    }}
         aria-pressed=${focusActive}
         title=${disableFocusToggle
-          ? "Disabled during onboarding"
-          : "Toggle focus mode (hide sidebar + page header)"}
+      ? "Disabled during onboarding"
+      : "Toggle focus mode (hide sidebar + page header)"}
       >
         ${focusIcon}
       </button>
@@ -238,5 +239,38 @@ function renderMonitorIcon() {
       <line x1="8" x2="16" y1="21" y2="21"></line>
       <line x1="12" x2="12" y1="17" y2="21"></line>
     </svg>
+  `;
+}
+
+export function renderLocaleToggle(state: AppViewState) {
+  const current = state.settings.locale || getLocale();
+  const toggle = (locale: "en" | "zh-TW") => () => {
+    state.setLocale(locale);
+  };
+
+  return html`
+    <div class="locale-toggle">
+      <div class="theme-toggle__track" role="group" aria-label="Language">
+        <span class="theme-toggle__indicator" style="left: ${current === "en" ? "2px" : "calc(50% + 2px)"}; width: calc(50% - 4px);"></span>
+        <button
+          class="theme-toggle__button ${current === "en" ? "active" : ""}"
+          @click=${toggle("en")}
+          aria-pressed=${current === "en"}
+          title="English"
+          style="width: 50%;"
+        >
+          EN
+        </button>
+        <button
+          class="theme-toggle__button ${current === "zh-TW" ? "active" : ""}"
+          @click=${toggle("zh-TW")}
+          aria-pressed=${current === "zh-TW"}
+          title="中文 (繁體)"
+          style="width: 50%;"
+        >
+          中
+        </button>
+      </div>
+    </div>
   `;
 }

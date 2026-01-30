@@ -7,6 +7,7 @@ import {
   schemaType,
   type JsonSchema,
 } from "./config-form.shared";
+import { t } from "../locales";
 
 export type ConfigProps = {
   raw: string;
@@ -182,6 +183,7 @@ function truncateValue(value: unknown, maxLen = 40): string {
 }
 
 export function renderConfig(props: ConfigProps) {
+  const strings = t();
   const validity =
     props.valid == null ? "unknown" : props.valid ? "valid" : "invalid";
   const analysis = analyzeConfigSchema(props.schema);
@@ -197,9 +199,14 @@ export function renderConfig(props: ConfigProps) {
   const knownKeys = new Set(SECTIONS.map(s => s.key));
   const extraSections = Object.keys(schemaProps)
     .filter(k => !knownKeys.has(k))
-    .map(k => ({ key: k, label: k.charAt(0).toUpperCase() + k.slice(1) }));
+    .map(k => ({ key: k, label: k }));
 
-  const allSections = [...availableSections, ...extraSections];
+  const allSectionsRaw = [...availableSections, ...extraSections];
+
+  const allSections = allSectionsRaw.map(s => ({
+    key: s.key,
+    label: getSectionLabel(s.key, strings)
+  }));
 
   const activeSectionSchema =
     props.activeSection && analysis.schema && schemaType(analysis.schema) === "object"
@@ -210,10 +217,10 @@ export function renderConfig(props: ConfigProps) {
     : null;
   const subsections = props.activeSection
     ? resolveSubsections({
-        key: props.activeSection,
-        schema: activeSectionSchema,
-        uiHints: props.uiHints,
-      })
+      key: props.activeSection,
+      schema: activeSectionSchema,
+      uiHints: props.uiHints,
+    })
     : [];
   const allowSubnav =
     props.formMode === "form" &&
@@ -255,7 +262,7 @@ export function renderConfig(props: ConfigProps) {
       <!-- Sidebar -->
       <aside class="config-sidebar">
         <div class="config-sidebar__header">
-          <div class="config-sidebar__title">Settings</div>
+          <div class="config-sidebar__title">${strings.settings}</div>
           <span class="pill pill--sm ${validity === "valid" ? "pill--ok" : validity === "invalid" ? "pill--danger" : ""}">${validity}</span>
         </div>
 
@@ -268,7 +275,7 @@ export function renderConfig(props: ConfigProps) {
           <input
             type="text"
             class="config-search__input"
-            placeholder="Search settings..."
+            placeholder=${strings.searchSettings}
             .value=${props.searchQuery}
             @input=${(e: Event) => props.onSearchChange((e.target as HTMLInputElement).value)}
           />
@@ -287,7 +294,7 @@ export function renderConfig(props: ConfigProps) {
             @click=${() => props.onSectionChange(null)}
           >
             <span class="config-nav__icon">${sidebarIcons.all}</span>
-            <span class="config-nav__label">All Settings</span>
+            <span class="config-nav__label">${strings.allSettings}</span>
           </button>
           ${allSections.map(section => html`
             <button
@@ -308,13 +315,13 @@ export function renderConfig(props: ConfigProps) {
               ?disabled=${props.schemaLoading || !props.schema}
               @click=${() => props.onFormModeChange("form")}
             >
-              Form
+              ${strings.form}
             </button>
             <button
               class="config-mode-toggle__btn ${props.formMode === "raw" ? "active" : ""}"
               @click=${() => props.onFormModeChange("raw")}
             >
-              Raw
+              ${strings.raw}
             </button>
           </div>
         </div>
@@ -326,35 +333,35 @@ export function renderConfig(props: ConfigProps) {
         <div class="config-actions">
           <div class="config-actions__left">
             ${hasChanges ? html`
-              <span class="config-changes-badge">${props.formMode === "raw" ? "Unsaved changes" : `${diff.length} unsaved change${diff.length !== 1 ? "s" : ""}`}</span>
+              <span class="config-changes-badge">${props.formMode === "raw" ? strings.unsavedChanges : strings.unsavedChangeCount(diff.length)}</span>
             ` : html`
-              <span class="config-status muted">No changes</span>
+              <span class="config-status muted">${strings.noChanges}</span>
             `}
           </div>
           <div class="config-actions__right">
             <button class="btn btn--sm" ?disabled=${props.loading} @click=${props.onReload}>
-              ${props.loading ? "Loading…" : "Reload"}
+              ${props.loading ? strings.loading : strings.reload}
             </button>
             <button
               class="btn btn--sm primary"
               ?disabled=${!canSave}
               @click=${props.onSave}
             >
-              ${props.saving ? "Saving…" : "Save"}
+              ${props.saving ? strings.saving : strings.save}
             </button>
             <button
               class="btn btn--sm"
               ?disabled=${!canApply}
               @click=${props.onApply}
             >
-              ${props.applying ? "Applying…" : "Apply"}
+              ${props.applying ? strings.applying : strings.apply}
             </button>
             <button
               class="btn btn--sm"
               ?disabled=${!canUpdate}
               @click=${props.onUpdate}
             >
-              ${props.updating ? "Updating…" : "Update"}
+              ${props.updating ? strings.updating : strings.update}
             </button>
           </div>
         </div>
@@ -363,7 +370,7 @@ export function renderConfig(props: ConfigProps) {
         ${hasChanges && props.formMode === "form" ? html`
           <details class="config-diff">
             <summary class="config-diff__summary">
-              <span>View ${diff.length} pending change${diff.length !== 1 ? "s" : ""}</span>
+              <span>${strings.viewPendingChanges(diff.length)}</span>
               <svg class="config-diff__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
@@ -384,90 +391,121 @@ export function renderConfig(props: ConfigProps) {
         ` : nothing}
 
         ${activeSectionMeta && props.formMode === "form"
-          ? html`
+      ? html`
               <div class="config-section-hero">
                 <div class="config-section-hero__icon">${getSectionIcon(props.activeSection ?? "")}</div>
                 <div class="config-section-hero__text">
                   <div class="config-section-hero__title">${activeSectionMeta.label}</div>
                   ${activeSectionMeta.description
-                    ? html`<div class="config-section-hero__desc">${activeSectionMeta.description}</div>`
-                    : nothing}
+          ? html`<div class="config-section-hero__desc">${activeSectionMeta.description}</div>`
+          : nothing}
                 </div>
               </div>
             `
-          : nothing}
+      : nothing}
 
         ${allowSubnav
-          ? html`
+      ? html`
               <div class="config-subnav">
                 <button
                   class="config-subnav__item ${effectiveSubsection === null ? "active" : ""}"
                   @click=${() => props.onSubsectionChange(ALL_SUBSECTION)}
                 >
-                  All
+                  ${strings.all}
                 </button>
                 ${subsections.map(
-                  (entry) => html`
+        (entry) => html`
                     <button
-                      class="config-subnav__item ${
-                        effectiveSubsection === entry.key ? "active" : ""
-                      }"
+                      class="config-subnav__item ${effectiveSubsection === entry.key ? "active" : ""
+          }"
                       title=${entry.description || entry.label}
                       @click=${() => props.onSubsectionChange(entry.key)}
                     >
                       ${entry.label}
                     </button>
                   `,
-                )}
+      )}
               </div>
             `
-          : nothing}
+      : nothing}
 
         <!-- Form content -->
         <div class="config-content">
           ${props.formMode === "form"
-            ? html`
+      ? html`
                 ${props.schemaLoading
-                  ? html`<div class="config-loading">
+          ? html`<div class="config-loading">
                       <div class="config-loading__spinner"></div>
-                      <span>Loading schema…</span>
+                      <span>${strings.loadingSchema}</span>
                     </div>`
-                  : renderConfigForm({
-                      schema: analysis.schema,
-                      uiHints: props.uiHints,
-                      value: props.formValue,
-                      disabled: props.loading || !props.formValue,
-                      unsupportedPaths: analysis.unsupportedPaths,
-                      onPatch: props.onFormPatch,
-                      searchQuery: props.searchQuery,
-                      activeSection: props.activeSection,
-                      activeSubsection: effectiveSubsection,
-                    })}
+          : renderConfigForm({
+            schema: analysis.schema,
+            uiHints: props.uiHints,
+            value: props.formValue,
+            disabled: props.loading || !props.formValue,
+            unsupportedPaths: analysis.unsupportedPaths,
+            onPatch: props.onFormPatch,
+            searchQuery: props.searchQuery,
+            activeSection: props.activeSection,
+            activeSubsection: effectiveSubsection,
+          })}
                 ${formUnsafe
-                  ? html`<div class="callout danger" style="margin-top: 12px;">
-                      Form view can't safely edit some fields.
-                      Use Raw to avoid losing config entries.
+          ? html`<div class="callout danger" style="margin-top: 12px;">
+                      ${strings.formUnsafeWarning}
                     </div>`
-                  : nothing}
+          : nothing}
               `
-            : html`
+      : html`
                 <label class="field config-raw-field">
-                  <span>Raw JSON5</span>
+                  <span>${strings.rawJson5}</span>
                   <textarea
                     .value=${props.raw}
                     @input=${(e: Event) =>
-                      props.onRawChange((e.target as HTMLTextAreaElement).value)}
+          props.onRawChange((e.target as HTMLTextAreaElement).value)}
                   ></textarea>
                 </label>
               `}
         </div>
 
         ${props.issues.length > 0
-          ? html`<div class="callout danger" style="margin-top: 12px;">
+      ? html`<div class="callout danger" style="margin-top: 12px;">
               <pre class="code-block">${JSON.stringify(props.issues, null, 2)}</pre>
             </div>`
-          : nothing}
+      : nothing}
       </main>
     </div>
   `;
+}
+
+function getSectionLabel(key: string, strings: ReturnType<typeof t>): string {
+  switch (key) {
+    case "env": return strings.sectionEnv;
+    case "update": return strings.sectionUpdate;
+    case "agents": return strings.sectionAgents;
+    case "auth": return strings.sectionAuth;
+    case "channels": return strings.sectionChannels;
+    case "messages": return strings.sectionMessages;
+    case "commands": return strings.sectionCommands;
+    case "hooks": return strings.sectionHooks;
+    case "skills": return strings.sectionSkills;
+    case "tools": return strings.sectionTools;
+    case "gateway": return strings.sectionGateway;
+    case "wizard": return strings.sectionWizard;
+    case "meta": return strings.sectionMeta;
+    case "logging": return strings.sectionLogging;
+    case "browser": return strings.sectionBrowser;
+    case "ui": return strings.sectionUi;
+    case "models": return strings.sectionModels;
+    case "bindings": return strings.sectionBindings;
+    case "broadcast": return strings.sectionBroadcast;
+    case "audio": return strings.sectionAudio;
+    case "session": return strings.sectionSession;
+    case "cron": return strings.sectionCron;
+    case "web": return strings.sectionWeb;
+    case "discovery": return strings.sectionDiscovery;
+    case "canvasHost": return strings.sectionCanvasHost;
+    case "talk": return strings.sectionTalk;
+    case "plugins": return strings.sectionPlugins;
+    default: return humanize(key);
+  }
 }

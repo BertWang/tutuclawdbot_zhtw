@@ -203,4 +203,5 @@ export type AppViewState = {
   handleLogsLevelFilterToggle: (level: LogLevel) => void;
   handleLogsAutoFollowToggle: (next: boolean) => void;
   handleCallDebugMethod: (method: string, params: string) => Promise<void>;
+  setLocale: (locale: "en" | "zh-TW") => void;
 };

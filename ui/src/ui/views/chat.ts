@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../locales";
 import { repeat } from "lit/directives/repeat.js";
 import type { SessionsListResult } from "../types";
 import type { ChatAttachment, ChatQueueItem } from "../ui-types";
@@ -72,13 +73,14 @@ export type ChatProps = {
 const COMPACTION_TOAST_DURATION_MS = 5000;
 
 function renderCompactionIndicator(status: CompactionIndicatorStatus | null | undefined) {
+  const strings = t();
   if (!status) return nothing;
 
   // Show "compacting..." while active
   if (status.active) {
     return html`
       <div class="callout info compaction-indicator compaction-indicator--active">
-        ${icons.loader} Compacting context...
+        ${icons.loader} ${strings.compacting}
       </div>
     `;
   }
@@ -89,7 +91,7 @@ function renderCompactionIndicator(status: CompactionIndicatorStatus | null | un
     if (elapsed < COMPACTION_TOAST_DURATION_MS) {
       return html`
         <div class="callout success compaction-indicator compaction-indicator--complete">
-          ${icons.check} Context compacted
+          ${icons.check} ${strings.contextCompacted}
         </div>
       `;
     }
@@ -141,40 +143,42 @@ function handlePaste(
 }
 
 function renderAttachmentPreview(props: ChatProps) {
+  const strings = t();
   const attachments = props.attachments ?? [];
   if (attachments.length === 0) return nothing;
 
   return html`
     <div class="chat-attachments">
       ${attachments.map(
-        (att) => html`
+    (att) => html`
           <div class="chat-attachment">
             <img
               src=${att.dataUrl}
-              alt="Attachment preview"
+              alt=${strings.attachmentId}
               class="chat-attachment__img"
             />
             <button
               class="chat-attachment__remove"
               type="button"
-              aria-label="Remove attachment"
+              aria-label=${strings.removeAttachment}
               @click=${() => {
-                const next = (props.attachments ?? []).filter(
-                  (a) => a.id !== att.id,
-                );
-                props.onAttachmentsChange?.(next);
-              }}
+        const next = (props.attachments ?? []).filter(
+          (a) => a.id !== att.id,
+        );
+        props.onAttachmentsChange?.(next);
+      }}
             >
               ${icons.x}
             </button>
           </div>
         `,
-      )}
+  )}
     </div>
   `;
 }
 
 export function renderChat(props: ChatProps) {
+  const strings = t();
   const canCompose = props.connected;
   const isBusy = props.sending || props.stream !== null;
   const canAbort = Boolean(props.canAbort && props.onAbort);
@@ -191,9 +195,9 @@ export function renderChat(props: ChatProps) {
   const hasAttachments = (props.attachments?.length ?? 0) > 0;
   const composePlaceholder = props.connected
     ? hasAttachments
-      ? "Add a message or paste more images..."
-      : "Message (↩ to send, Shift+↩ for line breaks, paste images)"
-    : "Connect to the gateway to start chatting…";
+      ? strings.composePlaceholderWithAttachments
+      : strings.composePlaceholderNormal
+    : strings.composePlaceholderDisconnected;
 
   const splitRatio = props.splitRatio ?? 0.6;
   const sidebarOpen = Boolean(props.sidebarOpen && props.onCloseSidebar);
@@ -204,60 +208,60 @@ export function renderChat(props: ChatProps) {
       aria-live="polite"
       @scroll=${props.onChatScroll}
     >
-      ${props.loading ? html`<div class="muted">Loading chat…</div>` : nothing}
+      ${props.loading ? html`<div class="muted">${strings.loadingChat}</div>` : nothing}
       ${repeat(buildChatItems(props), (item) => item.key, (item) => {
-        if (item.kind === "reading-indicator") {
-          return renderReadingIndicatorGroup(assistantIdentity);
-        }
+    if (item.kind === "reading-indicator") {
+      return renderReadingIndicatorGroup(assistantIdentity);
+    }
 
-        if (item.kind === "stream") {
-          return renderStreamingGroup(
-            item.text,
-            item.startedAt,
-            props.onOpenSidebar,
-            assistantIdentity,
-          );
-        }
+    if (item.kind === "stream") {
+      return renderStreamingGroup(
+        item.text,
+        item.startedAt,
+        props.onOpenSidebar,
+        assistantIdentity,
+      );
+    }
 
-        if (item.kind === "group") {
-          return renderMessageGroup(item, {
-            onOpenSidebar: props.onOpenSidebar,
-            showReasoning,
-            assistantName: props.assistantName,
-            assistantAvatar: assistantIdentity.avatar,
-          });
-        }
+    if (item.kind === "group") {
+      return renderMessageGroup(item, {
+        onOpenSidebar: props.onOpenSidebar,
+        showReasoning,
+        assistantName: props.assistantName,
+        assistantAvatar: assistantIdentity.avatar,
+      });
+    }
 
-        return nothing;
-      })}
+    return nothing;
+  })}
     </div>
   `;
 
   return html`
     <section class="card chat">
       ${props.disabledReason
-        ? html`<div class="callout">${props.disabledReason}</div>`
-        : nothing}
+      ? html`<div class="callout">${props.disabledReason}</div>`
+      : nothing}
 
       ${props.error
-        ? html`<div class="callout danger">${props.error}</div>`
-        : nothing}
+      ? html`<div class="callout danger">${props.error}</div>`
+      : nothing}
 
       ${renderCompactionIndicator(props.compactionStatus)}
 
       ${props.focusMode
-        ? html`
+      ? html`
             <button
               class="chat-focus-exit"
               type="button"
               @click=${props.onToggleFocusMode}
-              aria-label="Exit focus mode"
-              title="Exit focus mode"
+              aria-label=${strings.exitFocusMode}
+              title=${strings.exitFocusMode}
             >
               ${icons.x}
             </button>
           `
-        : nothing}
+      : nothing}
 
       <div
         class="chat-split-container ${sidebarOpen ? "chat-split-container--open" : ""}"
@@ -270,75 +274,75 @@ export function renderChat(props: ChatProps) {
         </div>
 
         ${sidebarOpen
-          ? html`
+      ? html`
               <resizable-divider
                 .splitRatio=${splitRatio}
                 @resize=${(e: CustomEvent) =>
-                  props.onSplitRatioChange?.(e.detail.splitRatio)}
+          props.onSplitRatioChange?.(e.detail.splitRatio)}
               ></resizable-divider>
               <div class="chat-sidebar">
                 ${renderMarkdownSidebar({
-                  content: props.sidebarContent ?? null,
-                  error: props.sidebarError ?? null,
-                  onClose: props.onCloseSidebar!,
-                  onViewRawText: () => {
-                    if (!props.sidebarContent || !props.onOpenSidebar) return;
-                    props.onOpenSidebar(`\`\`\`\n${props.sidebarContent}\n\`\`\``);
-                  },
-                })}
+            content: props.sidebarContent ?? null,
+            error: props.sidebarError ?? null,
+            onClose: props.onCloseSidebar!,
+            onViewRawText: () => {
+              if (!props.sidebarContent || !props.onOpenSidebar) return;
+              props.onOpenSidebar(`\`\`\`\n${props.sidebarContent}\n\`\`\``);
+            },
+          })}
               </div>
             `
-          : nothing}
+      : nothing}
       </div>
 
       ${props.queue.length
-        ? html`
+      ? html`
             <div class="chat-queue" role="status" aria-live="polite">
-              <div class="chat-queue__title">Queued (${props.queue.length})</div>
+              <div class="chat-queue__title">${strings.queuedMessages(props.queue.length)}</div>
               <div class="chat-queue__list">
                 ${props.queue.map(
-                  (item) => html`
+        (item) => html`
                     <div class="chat-queue__item">
                       <div class="chat-queue__text">
                         ${item.text ||
-                        (item.attachments?.length
-                          ? `Image (${item.attachments.length})`
-                          : "")}
+          (item.attachments?.length
+            ? strings.imageAttachment(item.attachments.length)
+            : "")}
                       </div>
                       <button
                         class="btn chat-queue__remove"
                         type="button"
-                        aria-label="Remove queued message"
+                        aria-label=${strings.remove}
                         @click=${() => props.onQueueRemove(item.id)}
                       >
                         ${icons.x}
                       </button>
                     </div>
                   `,
-                )}
+      )}
               </div>
             </div>
           `
-        : nothing}
+      : nothing}
 
       <div class="chat-compose">
         ${renderAttachmentPreview(props)}
         <div class="chat-compose__row">
           <label class="field chat-compose__field">
-            <span>Message</span>
+            <span>${strings.messageLabel}</span>
             <textarea
               .value=${props.draft}
               ?disabled=${!props.connected}
               @keydown=${(e: KeyboardEvent) => {
-                if (e.key !== "Enter") return;
-                if (e.isComposing || e.keyCode === 229) return;
-                if (e.shiftKey) return; // Allow Shift+Enter for line breaks
-                if (!props.connected) return;
-                e.preventDefault();
-                if (canCompose) props.onSend();
-              }}
+      if (e.key !== "Enter") return;
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.shiftKey) return; // Allow Shift+Enter for line breaks
+      if (!props.connected) return;
+      e.preventDefault();
+      if (canCompose) props.onSend();
+    }}
               @input=${(e: Event) =>
-                props.onDraftChange((e.target as HTMLTextAreaElement).value)}
+      props.onDraftChange((e.target as HTMLTextAreaElement).value)}
               @paste=${(e: ClipboardEvent) => handlePaste(e, props)}
               placeholder=${composePlaceholder}
             ></textarea>
@@ -349,14 +353,14 @@ export function renderChat(props: ChatProps) {
               ?disabled=${!props.connected || (!canAbort && props.sending)}
               @click=${canAbort ? props.onAbort : props.onNewSession}
             >
-              ${canAbort ? "Stop" : "New session"}
+              ${canAbort ? strings.stop : strings.newSession}
             </button>
             <button
               class="btn primary"
               ?disabled=${!props.connected}
               @click=${props.onSend}
             >
-              ${isBusy ? "Queue" : "Send"}<kbd class="btn-kbd">↵</kbd>
+              ${isBusy ? strings.queue : strings.send}<kbd class="btn-kbd">↵</kbd>
             </button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { html, nothing } from "lit";
-
+import { t } from "../locales";
 import { clampText } from "../format";
 import type { SkillStatusEntry, SkillStatusReport } from "../types";
 import type { SkillMessageMap } from "../controllers/skills";
@@ -21,49 +21,50 @@ export type SkillsProps = {
 };
 
 export function renderSkills(props: SkillsProps) {
+  const strings = t();
   const skills = props.report?.skills ?? [];
   const filter = props.filter.trim().toLowerCase();
   const filtered = filter
     ? skills.filter((skill) =>
-        [skill.name, skill.description, skill.source]
-          .join(" ")
-          .toLowerCase()
-          .includes(filter),
-      )
+      [skill.name, skill.description, skill.source]
+        .join(" ")
+        .toLowerCase()
+        .includes(filter),
+    )
     : skills;
 
   return html`
     <section class="card">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">Skills</div>
-          <div class="card-sub">Bundled, managed, and workspace skills.</div>
+          <div class="card-title">${strings.navSkills}</div>
+          <div class="card-sub">${strings.skillsSub}</div>
         </div>
         <button class="btn" ?disabled=${props.loading} @click=${props.onRefresh}>
-          ${props.loading ? "Loading…" : "Refresh"}
+          ${props.loading ? strings.loading : strings.refresh}
         </button>
       </div>
 
       <div class="filters" style="margin-top: 14px;">
         <label class="field" style="flex: 1;">
-          <span>Filter</span>
+          <span>${strings.filter}</span>
           <input
             .value=${props.filter}
             @input=${(e: Event) =>
-              props.onFilterChange((e.target as HTMLInputElement).value)}
-            placeholder="Search skills"
+      props.onFilterChange((e.target as HTMLInputElement).value)}
+            placeholder=${strings.searchSkills}
           />
         </label>
-        <div class="muted">${filtered.length} shown</div>
+        <div class="muted">${strings.numShown(filtered.length)}</div>
       </div>
 
       ${props.error
-        ? html`<div class="callout danger" style="margin-top: 12px;">${props.error}</div>`
-        : nothing}
+      ? html`<div class="callout danger" style="margin-top: 12px;">${props.error}</div>`
+      : nothing}
 
       ${filtered.length === 0
-        ? html`<div class="muted" style="margin-top: 16px;">No skills found.</div>`
-        : html`
+      ? html`<div class="muted" style="margin-top: 16px;">${strings.noSkillsFound}</div>`
+      : html`
             <div class="list" style="margin-top: 16px;">
               ${filtered.map((skill) => renderSkill(skill, props))}
             </div>
@@ -73,6 +74,7 @@ export function renderSkills(props: SkillsProps) {
 }
 
 function renderSkill(skill: SkillStatusEntry, props: SkillsProps) {
+  const strings = t();
   const busy = props.busyKey === skill.skillKey;
   const apiKey = props.edits[skill.skillKey] ?? "";
   const message = props.messages[skill.skillKey] ?? null;
@@ -85,8 +87,8 @@ function renderSkill(skill: SkillStatusEntry, props: SkillsProps) {
     ...skill.missing.os.map((o) => `os:${o}`),
   ];
   const reasons: string[] = [];
-  if (skill.disabled) reasons.push("disabled");
-  if (skill.blockedByAllowlist) reasons.push("blocked by allowlist");
+  if (skill.disabled) reasons.push(strings.disabled ?? "disabled");
+  if (skill.blockedByAllowlist) reasons.push(strings.blocked ?? "blocked by allowlist");
   return html`
     <div class="list-item">
       <div class="list-main">
@@ -97,24 +99,24 @@ function renderSkill(skill: SkillStatusEntry, props: SkillsProps) {
         <div class="chip-row" style="margin-top: 6px;">
           <span class="chip">${skill.source}</span>
           <span class="chip ${skill.eligible ? "chip-ok" : "chip-warn"}">
-            ${skill.eligible ? "eligible" : "blocked"}
+            ${skill.eligible ? strings.eligible : strings.blocked}
           </span>
-          ${skill.disabled ? html`<span class="chip chip-warn">disabled</span>` : nothing}
+          ${skill.disabled ? html`<span class="chip chip-warn">${strings.disabled}</span>` : nothing}
         </div>
         ${missing.length > 0
-          ? html`
+      ? html`
               <div class="muted" style="margin-top: 6px;">
-                Missing: ${missing.join(", ")}
+                ${strings.missingLabels} ${missing.join(", ")}
               </div>
             `
-          : nothing}
+      : nothing}
         ${reasons.length > 0
-          ? html`
+      ? html`
               <div class="muted" style="margin-top: 6px;">
-                Reason: ${reasons.join(", ")}
+                ${strings.reasonLabel} ${reasons.join(", ")}
               </div>
             `
-          : nothing}
+      : nothing}
       </div>
       <div class="list-meta">
         <div class="row" style="justify-content: flex-end; flex-wrap: wrap;">
@@ -123,40 +125,39 @@ function renderSkill(skill: SkillStatusEntry, props: SkillsProps) {
             ?disabled=${busy}
             @click=${() => props.onToggle(skill.skillKey, skill.disabled)}
           >
-            ${skill.disabled ? "Enable" : "Disable"}
+            ${skill.disabled ? strings.enable : strings.disable}
           </button>
           ${canInstall
-            ? html`<button
+      ? html`<button
                 class="btn"
                 ?disabled=${busy}
                 @click=${() =>
-                  props.onInstall(skill.skillKey, skill.name, skill.install[0].id)}
+          props.onInstall(skill.skillKey, skill.name, skill.install[0].id)}
               >
-                ${busy ? "Installing…" : skill.install[0].label}
+                ${busy ? strings.installing : skill.install[0].label}
               </button>`
-            : nothing}
+      : nothing}
         </div>
         ${message
-          ? html`<div
+      ? html`<div
               class="muted"
-              style="margin-top: 8px; color: ${
-                message.kind === "error"
-                  ? "var(--danger-color, #d14343)"
-                  : "var(--success-color, #0a7f5a)"
-              };"
+              style="margin-top: 8px; color: ${message.kind === "error"
+          ? "var(--danger-color, #d14343)"
+          : "var(--success-color, #0a7f5a)"
+        };"
             >
               ${message.message}
             </div>`
-          : nothing}
+      : nothing}
         ${skill.primaryEnv
-          ? html`
+      ? html`
               <div class="field" style="margin-top: 10px;">
-                <span>API key</span>
+                <span>${strings.apiKey}</span>
                 <input
                   type="password"
                   .value=${apiKey}
                   @input=${(e: Event) =>
-                    props.onEdit(skill.skillKey, (e.target as HTMLInputElement).value)}
+          props.onEdit(skill.skillKey, (e.target as HTMLInputElement).value)}
                 />
               </div>
               <button
@@ -165,10 +166,10 @@ function renderSkill(skill: SkillStatusEntry, props: SkillsProps) {
                 ?disabled=${busy}
                 @click=${() => props.onSaveKey(skill.skillKey)}
               >
-                Save key
+                ${strings.saveKey}
               </button>
             `
-          : nothing}
+      : nothing}
       </div>
     </div>
   `;

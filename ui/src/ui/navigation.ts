@@ -1,4 +1,18 @@
 import type { IconName } from "./icons.js";
+import { t } from "./locales";
+
+export function getTabGroups() {
+  const strings = t();
+  return [
+    { label: strings.groupChat, tabs: ["chat" as const] },
+    {
+      label: strings.groupControl,
+      tabs: ["overview" as const, "channels" as const, "instances" as const, "sessions" as const, "cron" as const],
+    },
+    { label: strings.groupAgent, tabs: ["skills" as const, "nodes" as const] },
+    { label: strings.groupSettings, tabs: ["config" as const, "debug" as const, "logs" as const] },
+  ];
+}
 
 export const TAB_GROUPS = [
   { label: "Chat", tabs: ["chat"] },
@@ -130,58 +144,60 @@ export function iconForTab(tab: Tab): IconName {
 }
 
 export function titleForTab(tab: Tab) {
+  const strings = t();
   switch (tab) {
     case "overview":
-      return "Overview";
+      return strings.tabTitleOverview;
     case "channels":
-      return "Channels";
+      return strings.tabTitleChannels;
     case "instances":
-      return "Instances";
+      return strings.tabTitleInstances;
     case "sessions":
-      return "Sessions";
+      return strings.tabTitleSessions;
     case "cron":
-      return "Cron Jobs";
+      return strings.tabTitleCron;
     case "skills":
-      return "Skills";
+      return strings.tabTitleSkills;
     case "nodes":
-      return "Nodes";
+      return strings.tabTitleNodes;
     case "chat":
-      return "Chat";
+      return strings.tabTitleChat;
     case "config":
-      return "Config";
+      return strings.tabTitleConfig;
     case "debug":
-      return "Debug";
+      return strings.tabTitleDebug;
     case "logs":
-      return "Logs";
+      return strings.tabTitleLogs;
     default:
-      return "Control";
+      return strings.groupControl;
   }
 }
 
 export function subtitleForTab(tab: Tab) {
+  const strings = t();
   switch (tab) {
     case "overview":
-      return "Gateway status, entry points, and a fast health read.";
+      return strings.tabSubOverview;
     case "channels":
-      return "Manage channels and settings.";
+      return strings.tabSubChannels;
     case "instances":
-      return "Presence beacons from connected clients and nodes.";
+      return strings.tabSubInstances;
     case "sessions":
-      return "Inspect active sessions and adjust per-session defaults.";
+      return strings.tabSubSessions;
     case "cron":
-      return "Schedule wakeups and recurring agent runs.";
+      return strings.tabSubCron;
     case "skills":
-      return "Manage skill availability and API key injection.";
+      return strings.tabSubSkills;
     case "nodes":
-      return "Paired devices, capabilities, and command exposure.";
+      return strings.tabSubNodes;
     case "chat":
-      return "Direct gateway chat session for quick interventions.";
+      return strings.tabSubChat;
     case "config":
-      return "Edit ~/.clawdbot/clawdbot.json safely.";
+      return strings.tabSubConfig;
     case "debug":
-      return "Gateway snapshots, events, and manual RPC calls.";
+      return strings.tabSubDebug;
     case "logs":
-      return "Live tail of the gateway file logs.";
+      return strings.tabSubLogs;
     default:
       return "";
   }

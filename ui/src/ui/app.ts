@@ -58,6 +58,7 @@ import {
   setTheme as setThemeInternal,
   onPopState as onPopStateInternal,
 } from "./app-settings";
+import { setLocale as setLocaleInternal } from "./app-locales";
 import {
   handleAbortChat as handleAbortChatInternal,
   handleSendChat as handleSendChatInternal,
@@ -347,6 +348,13 @@ export class ClawdbotApp extends LitElement {
       this as unknown as Parameters<typeof setThemeInternal>[0],
       next,
       context,
+    );
+  }
+
+  setLocale(next: "en" | "zh-TW") {
+    setLocaleInternal(
+      this as unknown as Parameters<typeof setLocaleInternal>[0],
+      next,
     );
   }
 

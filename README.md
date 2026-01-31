@@ -26,6 +26,7 @@
 4. **控制面板繁體中文化 (Traditional Chinese Dashboard)**
    - 全面中文化的 Web 控制台 (Control UI)，包含設定、排程、技能管理等介面。
    - **自動切換**: 根據瀏覽器語言設定自動顯示繁體中文。
+   by Bertwang
 
 ---
 

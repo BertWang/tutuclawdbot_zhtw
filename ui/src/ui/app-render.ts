@@ -42,6 +42,7 @@ import { renderLogs } from "./views/logs";
 import { renderNodes } from "./views/nodes";
 import { renderOverview } from "./views/overview";
 import { renderSessions } from "./views/sessions";
+import { renderDocsZh } from "./views/docs-zh";
 import { renderExecApprovalPrompt } from "./views/exec-approval";
 import {
   approveDevicePairing,
@@ -579,6 +580,8 @@ export function renderApp(state: AppViewState) {
         onScroll: (event) => state.handleLogsScroll(event),
       })
       : nothing}
+        
+        ${state.tab === "docs-zh" ? renderDocsZh() : nothing}
       </main>
       ${renderExecApprovalPrompt(state)}
     </div>

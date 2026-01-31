@@ -10,7 +10,7 @@ export function getTabGroups() {
       tabs: ["overview" as const, "channels" as const, "instances" as const, "sessions" as const, "cron" as const],
     },
     { label: strings.groupAgent, tabs: ["skills" as const, "nodes" as const] },
-    { label: strings.groupSettings, tabs: ["config" as const, "debug" as const, "logs" as const] },
+    { label: strings.groupSettings, tabs: ["config" as const, "debug" as const, "logs" as const, "docs-zh" as const] },
   ];
 }
 
@@ -21,7 +21,7 @@ export const TAB_GROUPS = [
     tabs: ["overview", "channels", "instances", "sessions", "cron"],
   },
   { label: "Agent", tabs: ["skills", "nodes"] },
-  { label: "Settings", tabs: ["config", "debug", "logs"] },
+  { label: "Settings", tabs: ["config", "debug", "logs", "docs-zh"] },
 ] as const;
 
 export type Tab =
@@ -35,7 +35,8 @@ export type Tab =
   | "chat"
   | "config"
   | "debug"
-  | "logs";
+  | "logs"
+  | "docs-zh";
 
 const TAB_PATHS: Record<Tab, string> = {
   overview: "/overview",
@@ -49,6 +50,7 @@ const TAB_PATHS: Record<Tab, string> = {
   config: "/config",
   debug: "/debug",
   logs: "/logs",
+  "docs-zh": "/docs-zh",
 };
 
 const PATH_TO_TAB = new Map(
@@ -138,6 +140,8 @@ export function iconForTab(tab: Tab): IconName {
       return "bug";
     case "logs":
       return "scrollText";
+    case "docs-zh":
+      return "book";
     default:
       return "folder";
   }
@@ -168,6 +172,8 @@ export function titleForTab(tab: Tab) {
       return strings.tabTitleDebug;
     case "logs":
       return strings.tabTitleLogs;
+    case "docs-zh":
+      return "OpenClaw 文檔";
     default:
       return strings.groupControl;
   }
@@ -198,6 +204,8 @@ export function subtitleForTab(tab: Tab) {
       return strings.tabSubDebug;
     case "logs":
       return strings.tabSubLogs;
+    case "docs-zh":
+      return "OpenClaw 核心文檔摘要";
     default:
       return "";
   }

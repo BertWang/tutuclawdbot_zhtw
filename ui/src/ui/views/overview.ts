@@ -253,6 +253,12 @@ export function renderOverview(props: OverviewProps) {
           <div class="note-title">${strings.cronReminders}</div>
           <div class="muted">${strings.cronRemindersSub}</div>
         </div>
+        <div>
+          <div class="note-title">OpenClaw 中文文檔</div>
+          <div class="muted">
+            <a href="/docs-zh" class="session-link">點擊查看核心文檔摘要</a>
+          </div>
+        </div>
       </div>
     </section>
   `;
